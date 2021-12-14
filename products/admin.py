@@ -1,10 +1,9 @@
 from django.contrib import admin
 from .models import Product, Category
 
-
 # Register your models here.
 
-class ProductsAdmin(admin.ModelAdmin):
+class ProductAdmin(admin.ModelAdmin):
     list_display = (
         'sku',
         'name',
@@ -14,7 +13,7 @@ class ProductsAdmin(admin.ModelAdmin):
         'image',
     )
 
-    ordering = ('sku', )
+    ordering = ('sku',)
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = (
@@ -22,6 +21,5 @@ class CategoryAdmin(admin.ModelAdmin):
         'name',
     )
 
-
-admin.site.register(Product, ProductsAdmin)
+admin.site.register(Product, ProductAdmin)
 admin.site.register(Category, CategoryAdmin)

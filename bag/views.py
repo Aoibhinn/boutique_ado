@@ -1,22 +1,29 @@
-from django.shortcuts import render, redirect
+from decimal import Decimal
+from django.conf import settings
 
-def view_bag(request):
-    """ A view that renders the bag contents page """
+def bag_contents(request):
 
-    return render(request, 'bag/bag.html')
+    bag_items = []
+    total = 0
+    product_count = 0
 
-def add_to_bag(request, item_id):
-    """ Add a quantity of the specified product to the shopping bag """
-
-    quantity = int(request.POST.get('quantity'))
-    redirect_url = request.POST.get('redirect_url')
-    bag = request.session.get('bag', {})
-
-    if item_id in list(bag.keys()):
-        bag[item_id] += quantity
+    if total < settings.FREE_DELIVERY_THRESHOLD:
+        delivery = total * Decimal(settings.STANDARD_DELIVERY_PERCENTAGE / 100)
+        free_delivery_delta = settings.FREE_DELIVERY_THRESHOLD - total
     else:
-        bag[item_id] = quantity
+        delivery = 0
+        free_delivery_delta = 0
+    
+    grand_total = delivery + total
+    
+    context = {
+        'bag_items': bag_items,
+        'total': total,
+        'product_count': product_count,
+        'delivery': delivery,
+        'free_delivery_delta': free_delivery_delta,
+        'free_delivery_threshold': settings.FREE_DELIVERY_THRESHOLD,
+        'grand_total': grand_total,
+    }
 
-    request.session['bag'] = bag
-    print(request.session['bag'])
-    return redirect(redirect_url)
+    return context
